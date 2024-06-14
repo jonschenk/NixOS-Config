@@ -83,7 +83,7 @@
     description = "Jon Schenk Jr";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-    #  thunderbird
+      thunderbird
     ];
   };
 
@@ -98,15 +98,37 @@
   # Install firefox.
   programs.firefox.enable = true;
 
+  # Install hyprland.
+  programs.hyprland {
+     enabled = true;
+     xwayland.enable = true;
+  };
+
+  environment.sessionVariables = {
+     WLR_NO_HARDWARE_CURSORS = "1";
+     NIXOS_OZONE_WL = "1";
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+     neovim
+     waybar
+     (waybar.overrideAttrs (oldAttrs: {
+       mesonFlags = oldAttrs.mesonFlags ++ [ "-Dexperimental=true" ]; })
+     )
+     dunst
+     libnotify
+     swww
+     kitty
+     rofi-wayland
   ];
+
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
